@@ -1,0 +1,16 @@
+.login-container .content-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f8f9fa; /* Optional: Set a background color for better visibility */
+}
+
+.login-page .page-content {
+    width: 100%;
+    max-width: 400px; /* Adjust as needed */
+    padding: 20px;
+    background-color: #fff; /* Optional: Set a background color for better visibility */
+    border-radius: 8px; /* Optional: Add rounded corners for aesthetic */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add shadow for better visibility */
+}
