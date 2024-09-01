@@ -7,7 +7,18 @@ axios.defaults.baseURL = 'https://localhost:44301/api';
 
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-
+axios.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('jwtToken'); 
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    }
+);
 axios.interceptors.response.use(
     async (response) => {
         await delay(500);

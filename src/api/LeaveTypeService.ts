@@ -15,11 +15,11 @@ const requests = {
 };
 
 const LeaveTypeService = {
-    getAll: () => requests.get('/leaveType'),
-    getDetails: (id: number) => requests.get(`/leaveType/${id}`),
-    create: (leaveType: CreateLeaveTypeDto) => requests.post('/leaveType', leaveType),
-    update: (leaveType: UpdateLeaveTypeDto) => requests.put(`/leaveType/${leaveType.id}`, leaveType),
-    delete: (id: number) => requests.delete(`/leaveType/${id}`),
+    getAll: () => requests.get('/leavetype'),
+    getDetails: (id: number) => requests.get(`/leavetype/${id}`),
+    create: (leaveType: CreateLeaveTypeDto) => requests.post('/leavetype/create', leaveType),
+    update: (leaveType: UpdateLeaveTypeDto) => requests.put(`/leavetype/update/${leaveType.id}`, leaveType),
+    delete: (id: number) => requests.delete(`/leavetype/delete/${id}`),
 };
 
 export default LeaveTypeService;

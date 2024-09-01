@@ -3,17 +3,31 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import Login from "../../models/accounts/Login";
 import User from "../../models/accounts/User";
 import agent from "../../api/Agent";
+import axios from "axios";
+import { RootState } from "../Store";
 
 interface UserState {
     currentUser: User | null;
     users: User[];
     loading: boolean;
     isLoggedIn: boolean;
+    
     error: string | null;
 }
 
+const token = localStorage.getItem("jwtToken");
+
 const initialState: UserState = {
-    currentUser: null,
+    currentUser: token 
+        ? {
+            id: '', 
+            firstName: '',
+            lastName: '',
+            email: '',
+            token: token,
+            role: ''
+        } 
+        : null,
     users: [],
     loading: false,
     isLoggedIn: false,
@@ -36,16 +50,54 @@ export const loginUser = createAsyncThunk(
 
 export const fetchCurrentUser = createAsyncThunk(
     'user/fetchCurrentUser',
-    async (_, thunkAPI) => {
+    async (_, { getState, rejectWithValue }) => {
+        const state = getState() as RootState;
+
+        
+        const token = state.user.currentUser?.token;
+        if (!token) {
+            console.log("No token found");
+            return rejectWithValue("No token found");
+        }
+
         try {
+            
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+            
             const response = await agent.UserService.getCurrentUser();
+            console.log(response);
+
             return response;
         } catch (error: any) {
-            return thunkAPI.rejectWithValue(error.message);
+            return rejectWithValue(error.message);
         }
     }
 );
+export const initializeApp = createAsyncThunk(
+    'user/initializeApp',
+    async (_, { dispatch, rejectWithValue }) => {
+        const token = localStorage.getItem('jwtToken');
+        if (token) {
+            try {
+                
+                axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
+                
+                const response = await agent.UserService.getCurrentUser();
+                return response;
+            } catch (error: any) {
+                
+                localStorage.removeItem('jwtToken');
+                delete axios.defaults.headers.common['Authorization'];
+                dispatch(logout());
+                return rejectWithValue("Invalid token");
+            }
+        } else {
+            return rejectWithValue("No token found");
+        }
+    }
+);
 
 export const fetchAllUsers = createAsyncThunk(
     'user/fetchAllUsers',
@@ -66,6 +118,7 @@ const userSlice = createSlice({
         logout: (state) => {
             state.currentUser = null;
             state.error = null;
+            localStorage.removeItem('jwtToken');
         }
     },
     extraReducers: (builder) => {
@@ -78,6 +131,9 @@ const userSlice = createSlice({
             state.loading = false;
             state.currentUser = action.payload;
             state.isLoggedIn = true;
+            if (action.payload?.token) {
+                localStorage.setItem('jwtToken', action.payload.token);
+            }
         });
         builder.addCase(loginUser.rejected, (state, action) => {
             state.loading = false;
@@ -92,6 +148,7 @@ const userSlice = createSlice({
         builder.addCase(fetchCurrentUser.fulfilled, (state, action) => {
             state.loading = false;
             state.currentUser = action.payload;
+            state.isLoggedIn = true;
         });
         builder.addCase(fetchCurrentUser.rejected, (state, action) => {
             state.loading = false;
@@ -109,6 +166,22 @@ const userSlice = createSlice({
         });
         builder.addCase(fetchAllUsers.rejected, (state, action) => {
             state.loading = false;
+            state.error = action.payload as string;
+        });
+
+         // Handle app initialization
+         builder.addCase(initializeApp.pending, (state) => {
+            state.loading = true;
+        });
+        builder.addCase(initializeApp.fulfilled, (state, action) => {
+            state.loading = false;
+            state.currentUser = action.payload;
+            state.isLoggedIn = true;
+        });
+        builder.addCase(initializeApp.rejected, (state, action) => {
+            state.loading = false;
+            state.isLoggedIn = false;
+            state.currentUser = null;
             state.error = action.payload as string;
         });
     },

@@ -1,4 +1,5 @@
-export interface CreateLeaveTypeDto {
-    name: string;
-    days: number;
+import BaseLeaveTypeDto from "./BaseLeaveTypeDto";
+
+export interface CreateLeaveTypeDto extends BaseLeaveTypeDto {
+    
 }

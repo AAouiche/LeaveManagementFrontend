@@ -18,6 +18,7 @@ const AppSidebar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.currentUser);
+  const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -27,7 +28,7 @@ const AppSidebar = () => {
   const menuItems = [
     { text: 'Home', icon: <HomeOutlinedIcon />, path: '/' },
     { text: 'Profile', icon: <PersonOutlinedIcon />, path: '/profile', authRequired: true },
-    { text: 'Leave Types', icon: <ListAltIcon />, path: '/leavetypes', authRequired: true },
+    { text: 'Leave Types', icon: <ListAltIcon />, path: '/admin/leavetypes', authRequired: true },
     { text: 'Leave Requests', icon: <AssignmentTurnedInIcon />, path: '/leaverequests', authRequired: true },
     { text: 'Log In', icon: <LoginIcon />, path: '/login', authRequired: false },
     { text: 'Log Out', icon: <ExitToAppIcon />, path: '/login', action: handleLogout, authRequired: true },
@@ -53,7 +54,7 @@ const AppSidebar = () => {
           </Typography>
           <List>
             {menuItems.map((item) => (
-              (!item.authRequired || user) && (
+              (!item.authRequired || isLoggedIn) && (
                 <ListItemButton
                   key={item.text}
                   component={item.action ? 'div' : NavLink}
@@ -73,10 +74,10 @@ const AppSidebar = () => {
             ))}
           </List>
         </Box>
-        {user && (
+        {isLoggedIn && (
           <Box sx={{ m: 2 }}>
             <Typography variant="body2" color="textSecondary">
-              Logged in as: {user.email}
+              Logged in as: {user?.email}
             </Typography>
           </Box>
         )}

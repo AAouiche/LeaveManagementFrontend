@@ -48,15 +48,15 @@ interface LeaveRequestState {
   // Async thunk for creating a new leave request
   export const createLeaveRequest = createAsyncThunk(
     'leaveRequests/createLeaveRequest',
-    async (leaveRequest: CreateLeaveRequestDto, thunkAPI) => {
-      try {
-        const response = await agent.LeaveRequestService.create(leaveRequest);
-        return response;
-      } catch (error:any) {
-        return thunkAPI.rejectWithValue(error.message);
-      }
+    async (formData: FormData, thunkAPI) => {
+        try {
+            const response = await agent.LeaveRequestService.create(formData);  
+            return response;
+        } catch (error: any) {
+            return thunkAPI.rejectWithValue(error.message);
+        }
     }
-  );
+);
   
   // Async thunk for updating a leave request
   export const updateLeaveRequest = createAsyncThunk(

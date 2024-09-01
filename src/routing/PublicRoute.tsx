@@ -7,7 +7,7 @@ export default function PublicRoute() {
   
    
     if (isLoggedIn) {
-      return <Navigate to="/dashboard" />;
+      return <Navigate to="/leaverequests" />;
     }
   
 

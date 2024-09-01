@@ -19,7 +19,12 @@ const requests = {
 const LeaveRequestService = {
     getAll: () => requests.get('/leaveRequest/getAll'),
     getDetails: (id: number) => requests.get(`/leaveRequest/get/${id}`),
-    create: (leaveRequest: CreateLeaveRequestDto) => requests.post('/leaveRequest/create', leaveRequest),
+    
+    
+    create: (formData: FormData) => requests.post('/leaveRequest/create', formData, {
+        'Content-Type': 'multipart/form-data',
+    }),
+
     update: (leaveRequest: UpdateLeaveRequestDto) => requests.put(`/leaveRequest/update/${leaveRequest.id}`, leaveRequest),
     delete: (id: number) => requests.delete(`/leaveRequest/delete/${id}`),
     cancel: (data: CancelLeaveRequestDto) => requests.post(`/leaveRequest/cancel/${data.id}`, data),

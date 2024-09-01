@@ -1,3 +1,4 @@
+import User from "../accounts/User";
 import LeaveType from "./LeaveType";
 
 
@@ -14,4 +15,6 @@ export default interface LeaveRequest {
     requestingEmployeeId: string;
     dateCreated?: Date;  
     dateModified?: Date;  
+    employee: User;
+
 }

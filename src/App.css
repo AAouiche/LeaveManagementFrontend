@@ -1,15 +1,9 @@
+body {
+  background-color: black !important;
+}
+
 .content-area {
   display: flex;
-  
-  background-color: #2e2e2e;
-  color: #f0f0f0; 
+  background-color: black !important;
+  color: #2d0000; 
 }
-
-.page-content {
-  flex-grow: 1; 
-  display: flex;
-  justify-content: center; 
-  align-items: center; 
-  padding: 20px; 
-}
-

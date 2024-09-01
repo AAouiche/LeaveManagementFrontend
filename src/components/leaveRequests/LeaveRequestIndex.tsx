@@ -23,6 +23,9 @@ const LeaveRequests = () => {
     const goToDetails = (id: number) => {
         navigate(`/leaverequests/${id}`);
     };
+    const gotToCreate = () =>{
+        navigate('/createLeaverequests');
+    }
 
     return (
         <Box className="leave-requests-container" sx={{ padding: 3 }}>
@@ -35,110 +38,107 @@ const LeaveRequests = () => {
                 </Button>
             </Box>
 
-            {loading ? (
-                <Box display="flex" justifyContent="center" mt={3}>
-                    <CircularProgress />
-                </Box>
-            ) : error ? (
-                <Box display="flex" justifyContent="center" mt={3}>
-                    <Typography color="error">{error}</Typography>
-                </Box>
-            ) : (
-                <>
-                    <Grid container spacing={3} mb={4}>
-                        <Grid item xs={12} sm={6} md={3}>
-                            <Card sx={{ backgroundColor: '#17a2b8', color: 'white', boxShadow: 3 }}>
-                                <CardContent>
-                                    <Typography variant="h5">Total Requests</Typography>
-                                    <Typography variant="h6">{totalRequests}</Typography>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-  
-                        <Grid item xs={12} sm={6} md={3}>
-                            <Card sx={{ backgroundColor: '#ffc107', color: 'white', boxShadow: 3 }}>
-                                <CardContent>
-                                    <Typography variant="h5">Pending Requests</Typography>
-                                    <Typography variant="h6">{pendingRequests}</Typography>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-  
-                        <Grid item xs={12} sm={6} md={3}>
-                            <Card sx={{ backgroundColor: '#28a745', color: 'white', boxShadow: 3 }}>
-                                <CardContent>
-                                    <Typography variant="h5">Approved Requests</Typography>
-                                    <Typography variant="h6">{approvedRequests}</Typography>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-  
-                        <Grid item xs={12} sm={6} md={3}>
-                            <Card sx={{ backgroundColor: '#dc3545', color: 'white', boxShadow: 3 }}>
-                                <CardContent>
-                                    <Typography variant="h5">Rejected Requests</Typography>
-                                    <Typography variant="h6">{rejectedRequests}</Typography>
-                                </CardContent>
-                            </Card>
-                        </Grid>
-                    </Grid>
+            <Grid container spacing={3} mb={4}>
+                <Grid item xs={12} sm={6} md={3}>
+                    <Card sx={{ backgroundColor: '#17a2b8', color: 'white', boxShadow: 3 }}>
+                        <CardContent>
+                            <Typography variant="h5">Total Requests</Typography>
+                            <Typography variant="h6">{loading ? "Loading..." : totalRequests}</Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                    <Card sx={{ backgroundColor: '#ffc107', color: 'white', boxShadow: 3 }}>
+                        <CardContent>
+                            <Typography variant="h5">Pending Requests</Typography>
+                            <Typography variant="h6">{loading ? "Loading..." : pendingRequests}</Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                    <Card sx={{ backgroundColor: '#28a745', color: 'white', boxShadow: 3 }}>
+                        <CardContent>
+                            <Typography variant="h5">Approved Requests</Typography>
+                            <Typography variant="h6">{loading ? "Loading..." : approvedRequests}</Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+                <Grid item xs={12} sm={6} md={3}>
+                    <Card sx={{ backgroundColor: '#dc3545', color: 'white', boxShadow: 3 }}>
+                        <CardContent>
+                            <Typography variant="h5">Rejected Requests</Typography>
+                            <Typography variant="h6">{loading ? "Loading..." : rejectedRequests}</Typography>
+                        </CardContent>
+                    </Card>
+                </Grid>
+            </Grid>
 
-                    <Box>
-                        <Typography variant="h4" gutterBottom>
-                            Leave Request Log
-                        </Typography>
-                        <TableContainer component={Paper}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Employee Id</TableCell>
-                                        <TableCell>Start Date</TableCell>
-                                        <TableCell>End Date</TableCell>
-                                        <TableCell>Leave Type</TableCell>
-                                        <TableCell>Date Requested</TableCell>
-                                        <TableCell>Approval Status</TableCell>
-                                        <TableCell>Actions</TableCell>
+            <Box>
+                <Typography variant="h4" gutterBottom>
+                    Leave Request Log
+                </Typography>
+                <TableContainer component={Paper}>
+                    <Table>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Employee Name</TableCell>
+                                <TableCell>Start Date</TableCell>
+                                <TableCell>End Date</TableCell>
+                                <TableCell>Leave Type</TableCell>
+                                <TableCell>Date Requested</TableCell>
+                                <TableCell>Approval Status</TableCell>
+                                <TableCell>Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {loading || error ? (
+                                <TableRow>
+                                    <TableCell colSpan={7} align="center">
+                                        {error ? (
+                                            <Typography color="error">{error}</Typography>
+                                        ) : (
+                                            <Typography>Loading data...</Typography>
+                                        )}
+                                    </TableCell>
+                                </TableRow>
+                            ) : (
+                                leaveRequests.map((item) => (
+                                    <TableRow key={item.id}>
+                                        <TableCell>{item.employee.firstName + " " + item.employee.lastName}</TableCell>
+                                        <TableCell>{new Date(item.startDate).toLocaleDateString()}</TableCell>
+                                        <TableCell>{new Date(item.endDate).toLocaleDateString()}</TableCell>
+                                        <TableCell>{item.leaveType?.name || 'N/A'}</TableCell>
+                                        <TableCell>{new Date(item.dateRequested).toLocaleDateString()}</TableCell>
+                                        <TableCell>
+                                            {item.cancelled ? (
+                                                <Badge badgeContent="Cancelled" color="secondary" />
+                                            ) : item.approved === true ? (
+                                                <Badge badgeContent="Approved" color="success" />
+                                            ) : item.approved === false ? (
+                                                <Badge badgeContent="Rejected" color="error" />
+                                            ) : (
+                                                <Badge badgeContent="Pending" color="warning" />
+                                            )}
+                                        </TableCell>
+                                        <TableCell>
+                                            {!item.cancelled && (
+                                                <Button
+                                                    variant="outlined"
+                                                    color="primary"
+                                                    onClick={() => goToDetails(item.id)}
+                                                    startIcon={<i className="fa fa-file" />}
+                                                >
+                                                    Review
+                                                </Button>
+                                            )}
+                                        </TableCell>
                                     </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {leaveRequests.map((item) => (
-                                        <TableRow key={item.id}>
-                                            <TableCell>{item.requestingEmployeeId}</TableCell>
-                                            <TableCell>{new Date(item.startDate).toLocaleDateString()}</TableCell>
-                                            <TableCell>{new Date(item.endDate).toLocaleDateString()}</TableCell>
-                                            <TableCell>{item.leaveType?.name || 'N/A'}</TableCell>
-                                            <TableCell>{new Date(item.dateRequested).toLocaleDateString()}</TableCell>
-                                            <TableCell>
-                                                {item.cancelled ? (
-                                                    <Badge badgeContent="Cancelled" color="secondary" />
-                                                ) : item.approved === true ? (
-                                                    <Badge badgeContent="Approved" color="success" />
-                                                ) : item.approved === false ? (
-                                                    <Badge badgeContent="Rejected" color="error" />
-                                                ) : (
-                                                    <Badge badgeContent="Pending" color="warning" />
-                                                )}
-                                            </TableCell>
-                                            <TableCell>
-                                                {!item.cancelled && (
-                                                    <Button
-                                                        variant="outlined"
-                                                        color="primary"
-                                                        onClick={() => goToDetails(item.id)}
-                                                        startIcon={<i className="fa fa-file" />}
-                                                    >
-                                                        Review
-                                                    </Button>
-                                                )}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
-                    </Box>
-                </>
-            )}
+                                ))
+                            )}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Box>
         </Box>
     );
 };

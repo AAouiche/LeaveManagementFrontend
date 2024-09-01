@@ -57,7 +57,7 @@ export const createLeaveType = createAsyncThunk(
     }
 );
 
-// Async thunk for updating a leave type
+
 export const updateLeaveType = createAsyncThunk(
     'leaveTypes/updateLeaveType',
     async (leaveType: UpdateLeaveTypeDto, thunkAPI) => {
