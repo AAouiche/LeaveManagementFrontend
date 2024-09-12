@@ -1,4 +1,5 @@
 import Login from '../models/accounts/Login';
+import RegisterDto from '../dtos/AuthorisationDtos/RegisterDto';
 import axios from './AxiosConfig';
 
 import { AxiosResponse } from 'axios';
@@ -14,6 +15,7 @@ const requests = {
 
 const UserService = {
     login: (loginCommand: Login) => requests.post('/User/login', loginCommand),
+    register: (registerCommand: RegisterDto) => requests.post('/User/register', registerCommand),
     getCurrentUser: () => requests.get('/user/me'),
     getAllUsers: () => requests.get('/user/list'),
 };

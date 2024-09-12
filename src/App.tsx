@@ -1,22 +1,33 @@
-
-import { Navigate, Outlet } from 'react-router-dom';
-import './App.css'
-
+import React, { useEffect } from 'react';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
-import AppNavbar from './components/common/NavBar/NavBar';
+import Navbar from './components/common/NavBar/NavBar';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { toast, ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from './redux/Store';
-import { useEffect } from 'react';
-import { fetchCurrentUser, initializeApp } from './redux/slices/UserSlice';
+import { initializeApp } from './redux/slices/UserSlice';
 import Loader from './components/common/Loader';
+import { Box, CssBaseline, ThemeProvider, createTheme, Container } from '@mui/material';
 
+const theme = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#1976d2',
+    },
+    background: {
+      default: '#121212',
+      paper: '#1e1e1e',
+    },
+  },
+});
 
 function App() {
     const dispatch = useDispatch<AppDispatch>();
     const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
     const loading = useSelector((state: RootState) => state.user.loading);
+    const location = useLocation();
 
     useEffect(() => {
         console.log('App initializing...');
@@ -26,18 +37,22 @@ function App() {
     if (loading) {
         return <Loader />; 
     }
-    if (!isLoggedIn && location.pathname !== '/login') {
-        return <Navigate to="/login" />;
-      }
+    if (!isLoggedIn && location.pathname !== '/public/login') {
+        return <Navigate to="/public/login" />;
+    }
+
     return (
-        <div className="content-area">
-            <ToastContainer position="bottom-right" />
-            {isLoggedIn && <AppNavbar />} 
-            <div className="page-content">
-                
-                <Outlet />
-            </div>
-        </div>
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+                {isLoggedIn && <Navbar />}
+                <Container maxWidth="lg" sx={{ mt: 4, mb: 4, flexGrow: 1 }}>
+                  {loading && <Loader />}
+                    <Outlet />
+                </Container>
+                <ToastContainer position="bottom-right" />
+            </Box>
+        </ThemeProvider>
     );
 }
 

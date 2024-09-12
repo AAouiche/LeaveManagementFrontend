@@ -66,7 +66,7 @@ function LeaveTypesIndex() {
         navigate(`/admin/leavetypes/create`);
     };
 
-    if (loading) return <CircularProgress />;
+    
     if (error) return <p>Error: {error}</p>;
 
     return (

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-
 import Login from "../../models/accounts/Login";
+import RegisterDto from "../../dtos/AuthorisationDtos/RegisterDto";
 import User from "../../models/accounts/User";
 import agent from "../../api/Agent";
 import axios from "axios";
@@ -11,7 +11,6 @@ interface UserState {
     users: User[];
     loading: boolean;
     isLoggedIn: boolean;
-    
     error: string | null;
 }
 
@@ -34,10 +33,21 @@ const initialState: UserState = {
     error: null,
 };
 
+export const registerUser = createAsyncThunk(
+    'user/registerUser',
+    async (registerData: RegisterDto, { rejectWithValue }) => {
+        try {
+            const response = await agent.UserService.register(registerData);
+            return response;
+        } catch (error: any) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
 
 export const loginUser = createAsyncThunk(
     'user/loginUser',
-    async (loginData: Login,{rejectWithValue}) => {
+    async (loginData: Login, { rejectWithValue }) => {
         try {
             const response = await agent.UserService.login(loginData);
             return response;
@@ -47,13 +57,10 @@ export const loginUser = createAsyncThunk(
     }
 );
 
-
 export const fetchCurrentUser = createAsyncThunk(
     'user/fetchCurrentUser',
     async (_, { getState, rejectWithValue }) => {
         const state = getState() as RootState;
-
-        
         const token = state.user.currentUser?.token;
         if (!token) {
             console.log("No token found");
@@ -61,33 +68,26 @@ export const fetchCurrentUser = createAsyncThunk(
         }
 
         try {
-            
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-            
             const response = await agent.UserService.getCurrentUser();
             console.log(response);
-
             return response;
         } catch (error: any) {
             return rejectWithValue(error.message);
         }
     }
 );
+
 export const initializeApp = createAsyncThunk(
     'user/initializeApp',
     async (_, { dispatch, rejectWithValue }) => {
         const token = localStorage.getItem('jwtToken');
         if (token) {
             try {
-                
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-                
                 const response = await agent.UserService.getCurrentUser();
                 return response;
             } catch (error: any) {
-                
                 localStorage.removeItem('jwtToken');
                 delete axios.defaults.headers.common['Authorization'];
                 dispatch(logout());
@@ -117,11 +117,30 @@ const userSlice = createSlice({
     reducers: {
         logout: (state) => {
             state.currentUser = null;
+            state.isLoggedIn = false;
             state.error = null;
             localStorage.removeItem('jwtToken');
         }
     },
     extraReducers: (builder) => {
+        // Handle registration
+        builder.addCase(registerUser.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        });
+        builder.addCase(registerUser.fulfilled, (state, action) => {
+            state.loading = false;
+            state.currentUser = action.payload;
+            state.isLoggedIn = true;
+            if (action.payload?.token) {
+                localStorage.setItem('jwtToken', action.payload.token);
+            }
+        });
+        builder.addCase(registerUser.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload as string;
+        });
+
         // Handle login
         builder.addCase(loginUser.pending, (state) => {
             state.loading = true;
@@ -169,8 +188,8 @@ const userSlice = createSlice({
             state.error = action.payload as string;
         });
 
-         // Handle app initialization
-         builder.addCase(initializeApp.pending, (state) => {
+        // Handle app initialization
+        builder.addCase(initializeApp.pending, (state) => {
             state.loading = true;
         });
         builder.addCase(initializeApp.fulfilled, (state, action) => {

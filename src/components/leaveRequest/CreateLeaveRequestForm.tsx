@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -13,27 +13,29 @@ import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { createLeaveRequest } from '../../redux/slices/LeaveRequestSlice';
 import { AppDispatch, RootState } from '../../redux/Store';
-import InputField from '../common/form/InputField';
-import SubmitButton from '../common/form/SubmitButton';
+
 import DragAndDrop from '../common/form/DragAndDrop';
+import { fetchLeaveTypes } from '../../redux/slices/LeaveTypeSlice';
 
 
 const LeaveRequestForm = () => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const employeeId = useSelector((state: RootState) => state.user.currentUser?.id);
+    const { leaveTypes, loading: leaveTypesLoading } = useSelector((state: RootState) => state.leaveTypes);
 
     const [file, setFile] = useState<File | null>(null);
+
+    useEffect(() => {
+        if (leaveTypes.length === 0) {
+            dispatch(fetchLeaveTypes());
+        }
+    }, [dispatch, leaveTypes.length]);
 
     if (!employeeId) {
         console.error("Employee ID is not available");
         return null; 
     }
-
-    const leaveTypes = [
-        { id: 1, name: 'Vacation' },
-        { id: 2, name: 'Sick' },
-    ];
 
     const initialValues = {
         startDate: '',  
@@ -124,6 +126,7 @@ const LeaveRequestForm = () => {
                                     helperText={touched.leaveTypeId ? errors.leaveTypeId : undefined}
                                     margin="normal"
                                     variant="outlined"
+                                    disabled={leaveTypesLoading}  
                                 >
                                     {leaveTypes.map((leaveType) => (
                                         <MenuItem key={leaveType.id} value={leaveType.id}>
@@ -157,21 +160,24 @@ const LeaveRequestForm = () => {
                                 )}
                             </Grid>
                             <Grid item xs={12}>
-                            <button type="submit" style={{
-                                    padding: '10px 20px',
-                                    backgroundColor: '#007bff',
-                                    color: 'white',
-                                    border: 'none',
-                                    borderRadius: '4px',
-                                    cursor: 'pointer',
-                                    fontSize: '16px',
-                                    fontWeight: 'bold',
-                                    textAlign: 'center',
-                                    transition: 'background-color 0.3s ease',
-                                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
-                                }}
-                                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0056b3'}
-                                onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#007bff'}>
+                                <button
+                                    type="submit"
+                                    style={{
+                                        padding: '10px 20px',
+                                        backgroundColor: '#007bff',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '4px',
+                                        cursor: 'pointer',
+                                        fontSize: '16px',
+                                        fontWeight: 'bold',
+                                        textAlign: 'center',
+                                        transition: 'background-color 0.3s ease',
+                                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+                                    }}
+                                    onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#0056b3'}
+                                    onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#007bff'}
+                                >
                                     Submit Request
                                 </button>
                             </Grid>

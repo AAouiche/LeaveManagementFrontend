@@ -5,14 +5,16 @@ import * as Yup from 'yup';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../../../redux/Store';
-import { loginUser } from '../../../redux/slices/UserSlice';
+import { registerUser } from '../../../redux/slices/UserSlice';
 
 const validationSchema = Yup.object({
+    firstName: Yup.string().required('First name is required'),
+    lastName: Yup.string().required('Last name is required'),
     email: Yup.string().email('Invalid email address').required('Email is required'),
     password: Yup.string().required('Password is required'),
 });
 
-const LoginForm: React.FC = () => {
+const RegisterForm: React.FC = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
 
@@ -30,21 +32,21 @@ const LoginForm: React.FC = () => {
             <Container maxWidth="sm">
                 <Paper elevation={6} sx={{ p: 4, width: '100%' }}>
                     <Typography component="h1" variant="h4" align="center" gutterBottom>
-                        Login
+                        Register
                     </Typography>
                     <Formik
-                        initialValues={{ email: '', password: '', rememberMe: false }}
+                        initialValues={{ firstName: '', lastName: '', email: '', password: '' }}
                         validationSchema={validationSchema}
                         onSubmit={async (values, { setSubmitting, setFieldError }) => {
                             try {
-                                const resultAction = await dispatch(loginUser(values));
-                                if (loginUser.fulfilled.match(resultAction)) {
+                                const resultAction = await dispatch(registerUser(values));
+                                if (registerUser.fulfilled.match(resultAction)) {
                                     navigate('/');
                                 } else {
-                                    setFieldError('email', 'Invalid email or password');
+                                    setFieldError('email', 'Registration failed');
                                 }
                             } catch (err) {
-                                setFieldError('email', 'Invalid email or password');
+                                setFieldError('email', 'Registration failed');
                             } finally {
                                 setSubmitting(false);
                             }
@@ -57,11 +59,39 @@ const LoginForm: React.FC = () => {
                                     margin="normal"
                                     required
                                     fullWidth
+                                    id="firstName"
+                                    label="First Name"
+                                    name="firstName"
+                                    autoComplete="given-name"
+                                    autoFocus
+                                    onChange={handleChange}
+                                    error={touched.firstName && Boolean(errors.firstName)}
+                                    helperText={touched.firstName && errors.firstName}
+                                    sx={{ mb: 2 }}
+                                />
+                                <Field
+                                    as={TextField}
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="lastName"
+                                    label="Last Name"
+                                    name="lastName"
+                                    autoComplete="family-name"
+                                    onChange={handleChange}
+                                    error={touched.lastName && Boolean(errors.lastName)}
+                                    helperText={touched.lastName && errors.lastName}
+                                    sx={{ mb: 2 }}
+                                />
+                                <Field
+                                    as={TextField}
+                                    margin="normal"
+                                    required
+                                    fullWidth
                                     id="email"
                                     label="Email"
                                     name="email"
                                     autoComplete="email"
-                                    autoFocus
                                     onChange={handleChange}
                                     error={touched.email && Boolean(errors.email)}
                                     helperText={touched.email && errors.email}
@@ -76,7 +106,7 @@ const LoginForm: React.FC = () => {
                                     label="Password"
                                     type="password"
                                     id="password"
-                                    autoComplete="current-password"
+                                    autoComplete="new-password"
                                     onChange={handleChange}
                                     error={touched.password && Boolean(errors.password)}
                                     helperText={touched.password && errors.password}
@@ -90,7 +120,7 @@ const LoginForm: React.FC = () => {
                                     sx={{ mt: 2, py: 1.5 }}
                                     disabled={isSubmitting}
                                 >
-                                    {isSubmitting ? 'Logging in...' : 'LOGIN'}
+                                    {isSubmitting ? 'Registering...' : 'REGISTER'}
                                 </Button>
                             </Form>
                         )}
@@ -101,4 +131,6 @@ const LoginForm: React.FC = () => {
     );
 };
 
-export default LoginForm;
+export default RegisterForm;
+
+

@@ -9,16 +9,18 @@ import NotFound from "../components/common/Error/NotFound";
 import LeaveTypesIndex from "../components/leaveTypes/LeaveTypesIndex";
 import CreateLeaveType from "../components/leaveTypes/CreateLeaveType";
 import EditLeaveType from "../components/leaveTypes/UpdateLeaveType";
+import RegisterForm from "../components/Authentication/register/RegisterForm";
 export const routes: RouteObject[] = [
   {
     path: '/',
     element: <App />,
     children: [
       {
-        path: 'login',
+        path: 'public',
         element: <PublicRoute />,
         children: [
-          { path: '', element: <LoginForm /> },
+          { path: 'login', element: <LoginForm /> },
+          { path: 'register', element: <RegisterForm /> },
         ],
       },
       {
@@ -42,14 +44,14 @@ export const routes: RouteObject[] = [
       },
     ],
   },
-  {
-    path: 'not-found',
-    element: <NotFound />,
-  },
-  {
-    path: '*',
-    element: <Navigate replace to='/not-found' />,
-  },
+  // {
+  //   path: 'not-found',
+  //   element: <NotFound />,
+  // },
+  // {
+  //   path: '*',
+  //   element: <Navigate replace to='/not-found' />,
+  // },
 ];
 
 // Create the Router

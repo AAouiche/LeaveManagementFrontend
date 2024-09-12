@@ -1,89 +1,72 @@
 import React from 'react';
-import { useState } from 'react';
-import { Drawer, List, ListItem, ListItemIcon, ListItemText, Typography, Box, ListItemButton } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Box, Avatar } from '@mui/material';
 import { NavLink, useNavigate } from 'react-router-dom';
-import HomeOutlinedIcon from '@mui/icons-material/HomeOutlined';
-import PersonOutlinedIcon from '@mui/icons-material/PersonOutlined';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../../redux/slices/UserSlice';
+import { RootState } from '../../../redux/Store';
+import HomeIcon from '@mui/icons-material/Home';
+import PersonIcon from '@mui/icons-material/Person';
 import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import LoginIcon from '@mui/icons-material/Login';
-import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../../../redux/slices/UserSlice';
-import { RootState } from '../../../redux/Store';
 
 const drawerWidth = 240;
 
-const AppSidebar = () => {
+const NavBar: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.user.currentUser);
   const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
+  const user = useSelector((state: RootState) => state.user.currentUser);
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/login');
+    //navigate('/public/login');
   };
 
-  const menuItems = [
-    { text: 'Home', icon: <HomeOutlinedIcon />, path: '/' },
-    { text: 'Profile', icon: <PersonOutlinedIcon />, path: '/profile', authRequired: true },
-    { text: 'Leave Types', icon: <ListAltIcon />, path: '/admin/leavetypes', authRequired: true },
-    { text: 'Leave Requests', icon: <AssignmentTurnedInIcon />, path: '/leaverequests', authRequired: true },
-    { text: 'Log In', icon: <LoginIcon />, path: '/login', authRequired: false },
-    { text: 'Log Out', icon: <ExitToAppIcon />, path: '/login', action: handleLogout, authRequired: true },
-  ];
-
   return (
-    <Drawer
-      sx={{
-        width: drawerWidth,
-        flexShrink: 0,
-        '& .MuiDrawer-paper': {
-          width: drawerWidth,
-          boxSizing: 'border-box',
-        },
-      }}
-      variant="permanent"
-      anchor="left"
-    >
-      <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', justifyContent: 'space-between' }}>
-        <Box>
-          <Typography variant="h5" sx={{ m: 2 }}>
-            HR.LeaveManagement
-          </Typography>
-          <List>
-            {menuItems.map((item) => (
-              (!item.authRequired || isLoggedIn) && (
-                <ListItemButton
-                  key={item.text}
-                  component={item.action ? 'div' : NavLink}
-                  to={item.path}
-                  onClick={item.action ? item.action : undefined}
-                  sx={{
-                    '&.active': {
-                      backgroundColor: 'rgba(0, 0, 0, 0.08)',
-                      color: 'primary.main',
-                    },
-                  }}
-                >
-                  <ListItemIcon>{item.icon}</ListItemIcon>
-                  <ListItemText primary={item.text} />
-                </ListItemButton>
-              )
-            ))}
-          </List>
+    <AppBar position="static" sx={{ mb: 4 }}>
+      <Toolbar>
+        <Typography variant="h6" component={NavLink} to="/" sx={{ flexGrow: 1, textDecoration: 'none', color: 'inherit' }}>
+          HR.LeaveManagement
+        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Button color="inherit" component={NavLink} to="/" startIcon={<HomeIcon />}>
+            Home
+          </Button>
+          {isLoggedIn && (
+            <>
+              <Button color="inherit" component={NavLink} to="/profile" startIcon={<PersonIcon />}>
+                Profile
+              </Button>
+              <Button color="inherit" component={NavLink} to="/admin/leavetypes" startIcon={<ListAltIcon />}>
+                Leave Types
+              </Button>
+              <Button color="inherit" component={NavLink} to="/leaverequests" startIcon={<AssignmentTurnedInIcon />}>
+                Leave Requests
+              </Button>
+              <Box sx={{ display: 'flex', alignItems: 'center', ml: 2 }}>
+                <Avatar sx={{ bgcolor: 'primary.main', mr: 1 }}>
+                  { user?.email?.charAt(0).toUpperCase()}
+                </Avatar>
+                <Typography variant="body1" sx={{ mr: 2 }}>
+                  { user?.email}
+                </Typography>
+                <Button color="inherit" onClick={handleLogout} startIcon={<ExitToAppIcon />}>
+                  Log Out
+                </Button>
+              </Box>
+            </>
+          )}
+          {!isLoggedIn && (
+            <Button color="inherit" component={NavLink} to="/login" startIcon={<LoginIcon />}>
+              Log In
+            </Button>
+          )}
         </Box>
-        {isLoggedIn && (
-          <Box sx={{ m: 2 }}>
-            <Typography variant="body2" color="textSecondary">
-              Logged in as: {user?.email}
-            </Typography>
-          </Box>
-        )}
-      </Box>
-    </Drawer>
+      </Toolbar>
+    </AppBar>
   );
 };
 
-export default AppSidebar;
+export default NavBar;
