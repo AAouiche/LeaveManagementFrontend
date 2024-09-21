@@ -37,9 +37,9 @@ function App() {
     if (loading) {
         return <Loader />; 
     }
-    if (!isLoggedIn && location.pathname !== '/public/login') {
-        return <Navigate to="/public/login" />;
-    }
+    // if (!isLoggedIn && location.pathname !== '/public/login') {
+    //     return <Navigate to="/public/login" />;
+    // }
 
     return (
         <ThemeProvider theme={theme}>

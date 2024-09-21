@@ -10,11 +10,17 @@ import LeaveTypesIndex from "../components/leaveTypes/LeaveTypesIndex";
 import CreateLeaveType from "../components/leaveTypes/CreateLeaveType";
 import EditLeaveType from "../components/leaveTypes/UpdateLeaveType";
 import RegisterForm from "../components/Authentication/register/RegisterForm";
+import HomePageRedirect from "../components/common/home/HomeRedirect";
+
 export const routes: RouteObject[] = [
   {
     path: '/',
     element: <App />,
     children: [
+      {
+        path: '',
+        element: <HomePageRedirect />,
+      },
       {
         path: 'public',
         element: <PublicRoute />,
@@ -35,23 +41,23 @@ export const routes: RouteObject[] = [
         path: 'admin/leavetypes',
         element: <ProtectedRoute />,
         children: [
-          { path: '', element: <LeaveTypesIndex /> }, 
-          { path: 'create', element: <CreateLeaveType /> }, 
-          { path: 'edit/:id', element: <EditLeaveType /> }, 
-          // { path: 'allocate/:id', element: <LeaveAllocationForm /> }, 
+          { path: '', element: <LeaveTypesIndex /> },
+          { path: 'create', element: <CreateLeaveType /> },
+          { path: 'edit/:id', element: <EditLeaveType /> },
+          // { path: 'allocate/:id', element: <LeaveAllocationForm /> },
           // { path: 'details/:id', element: <LeaveTypeDetails /> },
         ],
       },
     ],
   },
-  // {
-  //   path: 'not-found',
-  //   element: <NotFound />,
-  // },
-  // {
-  //   path: '*',
-  //   element: <Navigate replace to='/not-found' />,
-  // },
+  {
+    path: 'not-found',
+    element: <NotFound />,
+  },
+  {
+    path: '*',
+    element: <Navigate replace to="/not-found" />,
+  },
 ];
 
 // Create the Router
