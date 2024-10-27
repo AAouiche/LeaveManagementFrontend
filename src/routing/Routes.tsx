@@ -4,13 +4,14 @@ import PublicRoute from "./PublicRoute";
 import LoginForm from "../components/Authentication/login/LoginForm";
 import ProtectedRoute from "./ProtectedRoute";
 import LeaveRequests from "../components/leaveRequests/LeaveRequestIndex";
-import LeaveRequestForm from "../components/leaveRequest/CreateLeaveRequestForm";
+import LeaveRequestForm from "../components/leaveRequests/CreateLeaveRequestForm";
 import NotFound from "../components/common/Error/NotFound";
 import LeaveTypesIndex from "../components/leaveTypes/LeaveTypesIndex";
 import CreateLeaveType from "../components/leaveTypes/CreateLeaveType";
 import EditLeaveType from "../components/leaveTypes/UpdateLeaveType";
 import RegisterForm from "../components/Authentication/register/RegisterForm";
 import HomePageRedirect from "../components/common/home/HomeRedirect";
+import LeaveRequestDetails from "../components/leaveRequests/LeaveRequestDetails";
 
 export const routes: RouteObject[] = [
   {
@@ -35,6 +36,7 @@ export const routes: RouteObject[] = [
         children: [
           { path: '', element: <LeaveRequests /> },
           { path: 'create', element: <LeaveRequestForm /> },
+          { path: 'details/:id',element:<LeaveRequestDetails/>}
         ],
       },
       {

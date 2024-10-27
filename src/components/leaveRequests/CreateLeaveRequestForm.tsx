@@ -12,12 +12,13 @@ import {
 } from '@mui/material';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
-import { createLeaveRequest } from '../../redux/slices/LeaveRequestSlice';
+
 import { AppDispatch, RootState } from '../../redux/Store';
 
 import DragAndDrop from '../common/form/DragAndDrop';
 import { fetchLeaveTypes } from '../../redux/slices/LeaveTypeSlice';
 import { toast } from 'react-toastify';
+import { createLeaveRequest } from '../../redux/leaveRequests/LeaveRequestThunks';
 
 
 const LeaveRequestForm: React.FC = () => {
@@ -91,15 +92,24 @@ const LeaveRequestForm: React.FC = () => {
       });
   
       dispatch(createLeaveRequest(formData))
-        .unwrap()
-        .then(() => {
-          toast.success('Leave request created successfully.');
-          navigate('/leaverequests');
-        })
-        .catch((error) => {
-          console.error('Failed to create leave request:', error);
-          toast.error(error.message || 'Failed to create leave request. Please try again.');
-        });
+    .unwrap()
+    .then(() => {
+      toast.success('Leave request created successfully.');
+      navigate('/leaverequests');
+    })
+    .catch((error) => {
+      console.error('Failed to create leave request:', error);
+
+      
+      if (error.response && error.response.data) {
+        const serverError = error.response.data;
+        toast.error(serverError.description || 'Failed to create leave request. Please try again.');
+      } else if (error.message) {
+        toast.error(error.message);
+      } else {
+        toast.error('Failed to create leave request. Please try again.');
+      }
+    });
     };
   
     return (

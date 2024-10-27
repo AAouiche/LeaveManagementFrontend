@@ -33,16 +33,16 @@ axios.interceptors.response.use(
 
             switch (response.status) {
                 case 400:
-                    if (response.data.stackTrace) {
-                        const modalStateErrors = response.data.stackTrace.split(',');
-                        console.log(modalStateErrors);
-                        toast.error(modalStateErrors.join(' '));
-                        throw modalStateErrors.flat();
-                    } else {
-                        console.error('Error 400 without stackTrace:', response.data);
-                        toast.error(response.data.message || 'Bad Request');
-                        throw new Error('Error 400 without stackTrace');
-                    }
+                    // if (response.data.stackTrace) {
+                    //     const modalStateErrors = response.data.stackTrace.split(',');
+                    //     console.log(modalStateErrors);
+                    //     toast.error(modalStateErrors.join(' '));
+                    //     throw modalStateErrors.flat();
+                    // } else {
+                    //     console.error('Error 400 without stackTrace:', response.data);
+                    //     toast.error(response.data.message || 'Bad Request');
+                    //     throw new Error('Error 400 without stackTrace');
+                    // }
                 case 401:
                     toast.error("You're not authorized to access this resource or perform this operation.");
                     break;

@@ -1,8 +1,9 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
 import { CreateLeaveRequestDto, UpdateLeaveRequestDto } from '../../dtos/leaveRequestDtos';
 import LeaveRequest from '../../models/features/LeaveRequest';
 import agent from '../../api/Agent';
+import { cancelLeaveRequest, changeLeaveRequestApproval, createLeaveRequest, deleteLeaveRequest, fetchLeaveRequestDetails, fetchLeaveRequests, updateLeaveRequest } from './LeaveRequestThunks';
 
 
 interface LeaveRequestState {
@@ -19,71 +20,6 @@ interface LeaveRequestState {
     error: null,
   };
   
-  // Async thunk for fetching all leave requests
-  export const fetchLeaveRequests = createAsyncThunk(
-    'leaveRequests/fetchLeaveRequests',
-    async (_, thunkAPI) => {
-      try {
-        const response = await agent.LeaveRequestService.getAll();
-        return response;
-      } catch (error:any) {
-        return thunkAPI.rejectWithValue(error.message);
-      }
-    }
-  );
-  
-  // Async thunk for fetching leave request details
-  export const fetchLeaveRequestDetails = createAsyncThunk(
-    'leaveRequests/fetchLeaveRequestDetails',
-    async (id: number, thunkAPI) => {
-      try {
-        const response = await agent.LeaveRequestService.getDetails(id);
-        return response;
-      } catch (error:any) {
-        return thunkAPI.rejectWithValue(error.message);
-      }
-    }
-  );
-  
-  // Async thunk for creating a new leave request
-  export const createLeaveRequest = createAsyncThunk(
-    'leaveRequests/createLeaveRequest',
-    async (formData: FormData, thunkAPI) => {
-        try {
-            const response = await agent.LeaveRequestService.create(formData);  
-            return response;
-        } catch (error: any) {
-            return thunkAPI.rejectWithValue(error.message);
-        }
-    }
-);
-  
-  // Async thunk for updating a leave request
-  export const updateLeaveRequest = createAsyncThunk(
-    'leaveRequests/updateLeaveRequest',
-    async (leaveRequest: UpdateLeaveRequestDto, thunkAPI) => {
-      try {
-        const response = await agent.LeaveRequestService.update(leaveRequest);
-        return response;
-      } catch (error:any) {
-        return thunkAPI.rejectWithValue(error.message);
-      }
-    }
-  );
-  
-  // Async thunk for deleting a leave request
-  export const deleteLeaveRequest = createAsyncThunk(
-    'leaveRequests/deleteLeaveRequest',
-    async (id: number, thunkAPI) => {
-      try {
-        await agent.LeaveRequestService.delete(id);
-        return id;
-      } catch (error:any) {
-        return thunkAPI.rejectWithValue(error.message);
-      }
-    }
-  );
-  
   const leaveRequestSlice = createSlice({
     name: 'leaveRequests',
     initialState,
@@ -94,12 +30,14 @@ interface LeaveRequestState {
     },
     extraReducers: (builder) => {
       builder
+        
+  
         // Fetch all leave requests
         .addCase(fetchLeaveRequests.pending, (state) => {
           state.loading = true;
           state.error = null;
         })
-        .addCase(fetchLeaveRequests.fulfilled, (state, action) => {
+        .addCase(fetchLeaveRequests.fulfilled, (state, action: PayloadAction<LeaveRequest[]>) => {
           state.leaveRequests = action.payload;
           state.loading = false;
         })
@@ -113,7 +51,7 @@ interface LeaveRequestState {
           state.loading = true;
           state.error = null;
         })
-        .addCase(fetchLeaveRequestDetails.fulfilled, (state, action) => {
+        .addCase(fetchLeaveRequestDetails.fulfilled, (state, action: PayloadAction<LeaveRequest>) => {
           state.selectedLeaveRequest = action.payload;
           state.loading = false;
         })
@@ -127,7 +65,7 @@ interface LeaveRequestState {
           state.loading = true;
           state.error = null;
         })
-        .addCase(createLeaveRequest.fulfilled, (state, action) => {
+        .addCase(createLeaveRequest.fulfilled, (state, action: PayloadAction<LeaveRequest>) => {
           state.leaveRequests.push(action.payload);
           state.loading = false;
         })
@@ -141,10 +79,13 @@ interface LeaveRequestState {
           state.loading = true;
           state.error = null;
         })
-        .addCase(updateLeaveRequest.fulfilled, (state, action) => {
-          const index = state.leaveRequests.findIndex(lr => lr.id === action.payload.id);
+        .addCase(updateLeaveRequest.fulfilled, (state, action: PayloadAction<LeaveRequest>) => {
+          const index = state.leaveRequests.findIndex((lr) => lr.id === action.payload.id);
           if (index !== -1) {
             state.leaveRequests[index] = action.payload;
+          }
+          if (state.selectedLeaveRequest?.id === action.payload.id) {
+            state.selectedLeaveRequest = action.payload;
           }
           state.loading = false;
         })
@@ -158,11 +99,51 @@ interface LeaveRequestState {
           state.loading = true;
           state.error = null;
         })
-        .addCase(deleteLeaveRequest.fulfilled, (state, action) => {
-          state.leaveRequests = state.leaveRequests.filter(lr => lr.id !== action.payload);
+        .addCase(deleteLeaveRequest.fulfilled, (state, action: PayloadAction<number>) => {
+          state.leaveRequests = state.leaveRequests.filter((lr) => lr.id !== action.payload);
           state.loading = false;
         })
         .addCase(deleteLeaveRequest.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload as string;
+        })
+  
+        // Cancel a leave request
+        .addCase(cancelLeaveRequest.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+        })
+        .addCase(cancelLeaveRequest.fulfilled, (state, action: PayloadAction<LeaveRequest>) => {
+          const index = state.leaveRequests.findIndex((lr) => lr.id === action.payload.id);
+          if (index !== -1) {
+            state.leaveRequests[index] = action.payload;
+          }
+          if (state.selectedLeaveRequest?.id === action.payload.id) {
+            state.selectedLeaveRequest = action.payload;
+          }
+          state.loading = false;
+        })
+        .addCase(cancelLeaveRequest.rejected, (state, action) => {
+          state.loading = false;
+          state.error = action.payload as string;
+        })
+  
+        // Change leave request approval
+        .addCase(changeLeaveRequestApproval.pending, (state) => {
+          state.loading = true;
+          state.error = null;
+        })
+        .addCase(changeLeaveRequestApproval.fulfilled, (state, action: PayloadAction<LeaveRequest>) => {
+          const index = state.leaveRequests.findIndex((lr) => lr.id === action.payload.id);
+          if (index !== -1) {
+            state.leaveRequests[index] = action.payload;
+          }
+          if (state.selectedLeaveRequest?.id === action.payload.id) {
+            state.selectedLeaveRequest = action.payload;
+          }
+          state.loading = false;
+        })
+        .addCase(changeLeaveRequestApproval.rejected, (state, action) => {
           state.loading = false;
           state.error = action.payload as string;
         });
@@ -170,5 +151,4 @@ interface LeaveRequestState {
   });
   
   export const { clearSelectedLeaveRequest } = leaveRequestSlice.actions;
-  
   export default leaveRequestSlice.reducer;

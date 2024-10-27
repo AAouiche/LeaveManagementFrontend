@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import leaveRequestReducer from './slices/LeaveRequestSlice';
+import leaveRequestReducer from './leaveRequests/LeaveRequestSlice';
 import leaveAllocationsReducer from './slices/LeaveAllocationSlice';
 import leaveTypeReducer from './slices/LeaveTypeSlice';
 import userReducer from './slices/UserSlice';

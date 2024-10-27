@@ -3,7 +3,8 @@ import { Box, Button, Grid, Card, CardContent, Typography, Badge, Table, TableBo
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../../redux/Store';
 import { Link, useNavigate } from 'react-router-dom';
-import { fetchLeaveRequests } from '../../redux/slices/LeaveRequestSlice';
+import { fetchLeaveRequests } from '../../redux/leaveRequests/LeaveRequestThunks';
+
 
 const LeaveRequests: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -19,9 +20,12 @@ const LeaveRequests: React.FC = () => {
     useEffect(() => {
         dispatch(fetchLeaveRequests());
     }, [dispatch]);
+    useEffect(() => {
+        console.log("Leave Requests Data:", leaveRequests);
+    }, [leaveRequests]);
   
     const goToDetails = (id: number) => {
-        navigate(`/leaverequests/${id}`);
+        navigate(`/leaverequests/details/${id}`);
     };
 
     return (
