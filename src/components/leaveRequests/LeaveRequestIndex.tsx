@@ -21,7 +21,7 @@ const LeaveRequests: React.FC = () => {
     dispatch(fetchLeaveRequests());
   }, [dispatch]);
 
-  // Initialize SweetAlert2 with React content
+  
   const MySwal = withReactContent(Swal);
 
   // Function to open SweetAlert2 modal with leave request details
@@ -51,7 +51,7 @@ const LeaveRequests: React.FC = () => {
         </div>
       ),
       showCloseButton: true,
-      showConfirmButton: false, // Hide default 'OK' button
+      showConfirmButton: false, 
       width: '600px',
     });
   };

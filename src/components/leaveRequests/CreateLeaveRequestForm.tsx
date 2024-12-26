@@ -25,18 +25,18 @@ const LeaveRequestForm: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  // Selector to get employeeId from Redux store
+  
   const employeeId = useSelector((state: RootState) => state.user.currentUser?.id);
-  console.log('Initial employeeId:', employeeId); // Log initial employeeId
+  console.log('Initial employeeId:', employeeId); 
 
-  // Selector to get leave types and loading state
+
   const { leaveTypes, loading: leaveTypesLoading } = useSelector(
     (state: RootState) => state.leaveTypes
   );
-  console.log('Initial leaveTypes:', leaveTypes); // Log initial leaveTypes
-  console.log('Leave types loading state:', leaveTypesLoading); // Log loading state
+  console.log('Initial leaveTypes:', leaveTypes); 
+  console.log('Leave types loading state:', leaveTypesLoading); 
 
-  // Local state to manage component loading
+ 
   const [componentLoading, setComponentLoading] = useState(true);
 
   useEffect(() => {

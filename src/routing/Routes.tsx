@@ -12,16 +12,22 @@ import EditLeaveType from "../components/leaveTypes/UpdateLeaveType";
 import RegisterForm from "../components/Authentication/register/RegisterForm";
 import HomePageRedirect from "../components/common/home/HomeRedirect";
 import LeaveRequestDetails from "../components/leaveRequests/LeaveRequestDetails";
+import LeaveRequestIndex from "../components/leaveRequests/LeaveRequestIndex";
 
 export const routes: RouteObject[] = [
   {
     path: '/',
-    element: <App />,
+    element: <App />, // your main layout or wrapper
     children: [
-      {
-        path: '',
-        element: <HomePageRedirect />,
-      },
+      // If you want a real homepage, use a component:
+      // {
+      //   path: '',
+      //   element: <LeaveRequestIndex />,
+      // },
+      // If you prefer to go straight to login when hitting '/',
+      // you could do:
+      // { path: '', element: <Navigate to="/public/login" replace /> },
+
       {
         path: 'public',
         element: <PublicRoute />,
@@ -36,7 +42,6 @@ export const routes: RouteObject[] = [
         children: [
           { path: '', element: <LeaveRequests /> },
           { path: 'create', element: <LeaveRequestForm /> },
-          { path: 'details/:id',element:<LeaveRequestDetails/>}
         ],
       },
       {
@@ -46,8 +51,6 @@ export const routes: RouteObject[] = [
           { path: '', element: <LeaveTypesIndex /> },
           { path: 'create', element: <CreateLeaveType /> },
           { path: 'edit/:id', element: <EditLeaveType /> },
-          // { path: 'allocate/:id', element: <LeaveAllocationForm /> },
-          // { path: 'details/:id', element: <LeaveTypeDetails /> },
         ],
       },
     ],
@@ -62,5 +65,4 @@ export const routes: RouteObject[] = [
   },
 ];
 
-// Create the Router
 export const router = createBrowserRouter(routes);

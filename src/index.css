@@ -66,3 +66,11 @@ button:focus-visible {
     background-color: #0c0909;
   }
 }
+
+/* fix shadow box when opening modal */
+.swal2-container {
+  z-index: 999999 !important;
+}
+.swal2-popup {
+  box-shadow: none !important;
+}

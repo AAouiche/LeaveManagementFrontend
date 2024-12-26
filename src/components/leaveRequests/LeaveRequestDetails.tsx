@@ -25,6 +25,7 @@ const LeaveRequestDetailsModal: React.FC<LeaveRequestDetailsModalProps> = ({ lea
       showCloseButton: true,
       showConfirmButton: false,
       focusConfirm: false,
+      backdrop: false,
     });
   };
 

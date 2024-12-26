@@ -6,9 +6,9 @@ export default function PublicRoute() {
     const isLoggedIn = useSelector((state:RootState) => state.user.isLoggedIn);
   
    
-    if (isLoggedIn) {
-      return <Navigate to="/leaverequests" />;
-    }
+    // if (isLoggedIn) {
+    //   return <Navigate to="/leaverequests" />;
+    // }
   
 
     return <Outlet />;
