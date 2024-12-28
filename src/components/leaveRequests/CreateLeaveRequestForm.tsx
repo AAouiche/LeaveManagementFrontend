@@ -25,7 +25,8 @@ const LeaveRequestForm: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  
+  const user = useSelector((state: RootState) => state.user);
+  console.log('user',user);
   const employeeId = useSelector((state: RootState) => state.user.currentUser?.id);
   console.log('Initial employeeId:', employeeId); 
 

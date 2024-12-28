@@ -2,14 +2,14 @@ import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 import { RootState } from "../redux/Store";
 
-export default function PublicRoute() {
-    const isLoggedIn = useSelector((state:RootState) => state.user.isLoggedIn);
-  
-   
-    // if (isLoggedIn) {
-    //   return <Navigate to="/leaverequests" />;
-    // }
-  
+const PublicRoute: React.FC = () => {
+  const isLoggedIn = useSelector((state: RootState) => state.user.isLoggedIn);
 
-    return <Outlet />;
+  if (isLoggedIn) {
+    return <Navigate to="/leaverequests" replace />;
   }
+
+  return <Outlet />;
+};
+
+export default PublicRoute;

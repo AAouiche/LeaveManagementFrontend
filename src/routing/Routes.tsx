@@ -26,7 +26,7 @@ export const routes: RouteObject[] = [
       // },
       // If you prefer to go straight to login when hitting '/',
       // you could do:
-      // { path: '', element: <Navigate to="/public/login" replace /> },
+      { path: '', element: <Navigate to="/public/login" replace /> },
 
       {
         path: 'public',
