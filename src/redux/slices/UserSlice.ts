@@ -19,7 +19,7 @@ const token = localStorage.getItem("jwtToken");
 const initialState: UserState = {
     currentUser: token 
         ? {
-            id: '', 
+            Id: '', 
             firstName: '',
             lastName: '',
             email: '',
@@ -47,12 +47,16 @@ export const registerUser = createAsyncThunk(
 
 export const loginUser = createAsyncThunk(
     'user/loginUser',
-    async (loginData: Login, { rejectWithValue }) => {
+    async (loginData: Login, { dispatch, rejectWithValue }) => {
         try {
             const response = await agent.UserService.login(loginData);
+            const { token } = response;
+            localStorage.setItem('jwtToken', token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            await dispatch(initializeApp()).unwrap();
             return response;
         } catch (error: any) {
-            return rejectWithValue(error.message);
+            return rejectWithValue(error.response?.data?.message || error.message);
         }
     }
 );

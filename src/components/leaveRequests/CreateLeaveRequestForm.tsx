@@ -27,7 +27,7 @@ const LeaveRequestForm: React.FC = () => {
 
   const user = useSelector((state: RootState) => state.user);
   console.log('user',user);
-  const employeeId = useSelector((state: RootState) => state.user.currentUser?.id);
+  const employeeId = useSelector((state: RootState) => state.user);
   console.log('Initial employeeId:', employeeId); 
 
 
